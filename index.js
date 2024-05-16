@@ -94,6 +94,9 @@ class LinkedList {
 				if (this.head) {
 					this.head.prev = null;
 				}
+				if (this.#length == 1) {
+					this.tail = null;
+				}
 				this.#length--;
 			} else if (index === this.#length - 1) {
 				this.pop();
