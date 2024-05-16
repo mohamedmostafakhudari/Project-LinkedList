@@ -63,25 +63,53 @@ class LinkedList {
 		}
 		return null;
 	}
-	insertAt(value, index) {
-		const newNode = createNode(value);
+	insertAt(value, pos) {
+		const index = pos - 1;
 		const node = this.at(index);
 		if (node) {
-			newNode.prev = node.prev;
-			newNode.next = node;
-			node.prev.next = newNode;
-			node.prev = newNode;
-			this.#length++;
+			if (index === 0) {
+				this.prepend(value);
+			} else if (index === this.#length - 1) {
+				this.append(value);
+			} else {
+				const newNode = createNode(value);
+
+				newNode.prev = node.prev;
+				newNode.next = node;
+				node.prev.next = newNode;
+				node.prev = newNode;
+				this.#length++;
+			}
 		}
 	}
-	removeAt(index) {
+	removeAt(pos) {
+		const index = pos - 1;
+		if (this.head === null) return;
 		const node = this.at(index);
 		if (node) {
-			node.prev.next = node.next;
-			node.next.prev = node.prev;
-			node.next = null;
-			node.prev = null;
-			this.#length--;
+			if (index === 0) {
+				let temp = this.head;
+				this.head = this.head.next;
+				temp.next = null;
+				if (this.head) {
+					this.head.prev = null;
+				}
+				this.#length--;
+			} else if (index === this.#length - 1) {
+				this.pop();
+			} else {
+				if (node.prev?.next) {
+					node.prev.next = node.next;
+				}
+				if (node.next?.prev) {
+					node.next.prev = node.prev;
+				}
+				node.next = null;
+				node.prev = null;
+				this.#length--;
+			}
+
+			return true;
 		}
 	}
 	toString() {
@@ -142,7 +170,7 @@ console.log(`
 
 linkedList.insertAt(10, 1);
 
-console.log(`insert a new node at index 1: ${linkedList.toString()}
+console.log(`insert a new node at pos 1: ${linkedList.toString()}
 size: ${linkedList.size}`);
 
 console.log(`
@@ -151,7 +179,11 @@ console.log(`
 
 linkedList.removeAt(2);
 
-console.log(`remove the node at index 2: ${linkedList.toString()}
+console.log(`remove the node at pos 2: ${linkedList.toString()}
+size: ${linkedList.size}`);
+linkedList.removeAt(3);
+
+console.log(`remove the node at pos 3: ${linkedList.toString()}
 size: ${linkedList.size}`);
 
 function createNode(value) {
